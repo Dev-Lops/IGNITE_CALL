@@ -9,7 +9,7 @@ import {
 
 import { GetWeekDays } from '@/utils/get-week-days'
 import { ArrowRight } from 'phosphor-react'
-import { useFieldArray, useForm } from 'react-hook-form'
+import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Container, Header } from '../styles'
 import {
@@ -26,7 +26,7 @@ export default function TimeIntervals() {
   const {
     register,
     handleSubmit,
-    setValue,
+    watch,
     control,
     formState: { errors, isSubmitting },
   } = useForm({
@@ -50,6 +50,8 @@ export default function TimeIntervals() {
     name: 'intervals',
   })
 
+  const intervals = watch('intervals')
+
   async function handleSetTimeIntervals() {}
 
   return (
@@ -70,19 +72,32 @@ export default function TimeIntervals() {
             return (
               <IntervalItem key={field.id}>
                 <IntervalDay>
-                  <Checkbox />
+                  <Controller
+                    name={`intervals.${index}.enabled`}
+                    control={control}
+                    render={({ field }) => (
+                      <Checkbox
+                        onCheckedChange={(checked) => {
+                          field.onChange(checked === true)
+                        }}
+                        checked={field.value}
+                      />
+                    )}
+                  />
                   <Text>{weekDays[field.weekDay]}</Text>
                 </IntervalDay>
                 <IntervalInputs>
                   <TextInput
                     size="sm"
                     type="time"
+                    disabled={intervals[index].enabled === false}
                     step={60}
                     {...register(`intervals.${index}.startTime`)}
                   />
                   <TextInput
                     size="sm"
                     type="time"
+                    disabled={intervals[index].enabled === false}
                     step={60}
                     {...register(`intervals.${index}.endTime`)}
                   />
