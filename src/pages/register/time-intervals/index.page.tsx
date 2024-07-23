@@ -13,6 +13,8 @@ import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Container, Header } from '../styles'
 
+import { api } from '@/lib/axios'
+import { convertTimeStringToMinutes } from '@/utils/converter-time-string-to-minutes'
 import { GetWeekDays } from '@/utils/get-week-days'
 import {
   FormError,
@@ -37,28 +39,28 @@ const timeIntervalsFormSchema = z.object({
     .transform((intervals) => intervals.filter((interval) => interval.enabled))
     .refine((intervals) => intervals.length > 0, {
       message: 'Você precisa selecionar pelo menos um dia da semana',
-    }),
-  // .transform((intervals) => {
-  //   return intervals.map((interval) => {
-  //     return {
-  //       weekDay: interval.weekDay,
-  //       startTimeInMinutes: interval.startTime,
-  //       endTimeInMinutes: interval.endTime,
-  //     }
-  //   })
-  // })
-  // .refine(
-  //   (intervals) => {
-  //     return intervals.every(
-  //       (interval) =>
-  //         interval.endTimeInMinutes - 60 >= interval.startTimeInMinutes,
-  //     )
-  //   },
-  //   {
-  //     message:
-  //       'O horário de término deve ser pelo menos 1h distante do início.',
-  //   },
-  // ),
+    })
+    .transform((intervals) => {
+      return intervals.map((interval) => {
+        return {
+          weekDay: interval.weekDay,
+          startTimeInMinutes: convertTimeStringToMinutes(interval.startTime),
+          endTimeInMinutes: convertTimeStringToMinutes(interval.endTime),
+        }
+      })
+    })
+    .refine(
+      (intervals) => {
+        return intervals.every(
+          (interval) =>
+            interval.endTimeInMinutes - 60 >= interval.startTimeInMinutes,
+        )
+      },
+      {
+        message:
+          'O horário de término deve ser pelo menos 1h distante do início.',
+      },
+    ),
 })
 
 type TimeIntervalsFormInput = z.input<typeof timeIntervalsFormSchema>
@@ -98,11 +100,11 @@ export default function TimeIntervals() {
   const intervals = watch('intervals')
 
   async function handleSetTimeIntervals(data: any) {
-    // const { intervals } = data as TimeIntervalsFormOutput
-    // await api.post('/users/time-intervals', {
-    //   intervals,
-    // })
-    // await router.push('/register/update-profile')
+    const { intervals } = data as TimeIntervalsFormOutput
+    await api.post('/users/time-intervals', {
+      intervals,
+    })
+    await router.push('/register/update-profile')
     console.log(data)
   }
 
