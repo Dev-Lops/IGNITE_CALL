@@ -24,6 +24,7 @@ import {
   IntervalInputs,
   IntervalItem,
 } from './styles'
+import { NextSeo } from 'next-seo'
 
 const timeIntervalsFormSchema = z.object({
   intervals: z
@@ -109,6 +110,7 @@ export default function TimeIntervals() {
 
   return (
     <>
+      <NextSeo title="Selecione sua disponibilidade | Ignite Call" noindex />
       <Container>
         <Header>
           <Heading as="strong">Quase lá</Heading>

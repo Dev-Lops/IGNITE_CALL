@@ -19,6 +19,7 @@ import { api } from '../../../lib/axios'
 import { Container, Header } from '../styles'
 import { FormAnnotation, ProfileBox } from './styles'
 import { buildNextAuthOptions } from '@/pages/api/auth/[...nextauth].api'
+import { NextSeo } from 'next-seo'
 
 const updateProfileSchema = z.object({
   bio: z.string(),
@@ -48,6 +49,7 @@ export default function UpdateProfile() {
 
   return (
     <>
+      <NextSeo title="Atualize seu perfil | Ignite Call" noindex />
       <Container>
         <Header>
           <Heading as="strong">Bem-vindo ao Ignite Call!</Heading>
