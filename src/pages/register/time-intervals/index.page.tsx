@@ -1,3 +1,4 @@
+import { ChangeEvent } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Button,
@@ -7,15 +8,14 @@ import {
   Text,
   TextInput,
 } from '@ignite-ui/react'
+import { NextSeo } from 'next-seo'
 import { useRouter } from 'next/router'
 import { ArrowRight } from 'phosphor-react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
+import { useMemo } from 'react'
 import { z } from 'zod'
+import { api } from '../../../lib/axios'
 import { Container, Header } from '../styles'
-
-import { api } from '@/lib/axios'
-import { convertTimeStringToMinutes } from '@/utils/converter-time-string-to-minutes'
-import { GetWeekDays } from '@/utils/get-week-days'
 import {
   FormError,
   IntervalBox,
@@ -24,7 +24,8 @@ import {
   IntervalInputs,
   IntervalItem,
 } from './styles'
-import { NextSeo } from 'next-seo'
+import { convertTimeStringToMinutes } from '@/utils/converter-time-string-to-minutes'
+import { GetWeekDays } from '@/utils/get-week-days'
 
 const timeIntervalsFormSchema = z.object({
   intervals: z
@@ -91,7 +92,7 @@ export default function TimeIntervals() {
 
   const router = useRouter()
 
-  const weekDays = GetWeekDays()
+  const weekDays = useMemo(() => GetWeekDays(), [])
 
   const { fields } = useFieldArray({
     control,
@@ -100,17 +101,33 @@ export default function TimeIntervals() {
 
   const intervals = watch('intervals')
 
-  async function handleSetTimeIntervals(data: any) {
-    const { intervals } = data as TimeIntervalsFormOutput
+  async function handleSetTimeIntervals(data: TimeIntervalsFormOutput) {
+    const { intervals } = data
+
     await api.post('/users/time-intervals', {
       intervals,
     })
+
     await router.push('/register/update-profile')
+  }
+
+  function onSubmit(data: TimeIntervalsFormInput) {
+    const transformedData: TimeIntervalsFormOutput = {
+      intervals: data.intervals
+        .filter(interval => interval.enabled)
+        .map(interval => ({
+          weekDay: interval.weekDay,
+          startTimeInMinutes: convertTimeStringToMinutes(interval.startTime),
+          endTimeInMinutes: convertTimeStringToMinutes(interval.endTime),
+        })),
+    }
+    return handleSetTimeIntervals(transformedData)
   }
 
   return (
     <>
       <NextSeo title="Selecione sua disponibilidade | Ignite Call" noindex />
+
       <Container>
         <Header>
           <Heading as="strong">Quase lá</Heading>
@@ -122,47 +139,53 @@ export default function TimeIntervals() {
           <MultiStep size={4} currentStep={3} />
         </Header>
 
-        <IntervalBox as="form" onSubmit={handleSubmit(handleSetTimeIntervals)}>
+        <IntervalBox as="form" onSubmit={handleSubmit(onSubmit)}>
           <IntervalContainer>
-            {fields.map((field, index) => {
-              return (
-                <IntervalItem key={field.id}>
-                  <IntervalDay>
-                    <Controller
-                      name={`intervals.${index}.enabled`}
-                      control={control}
-                      render={({ field }) => {
-                        return (
-                          <Checkbox
-                            onCheckedChange={(checked) =>
-                              field.onChange(checked === true)
-                            }
-                            checked={field.value}
-                          />
-                        )
-                      }}
-                    />
-                    <Text>{weekDays[field.weekDay]}</Text>
-                  </IntervalDay>
-                  <IntervalInputs>
-                    <TextInput
-                      size="sm"
-                      type="time"
-                      step={60}
-                      disabled={intervals[index].enabled === false}
-                      {...register(`intervals.${index}.startTime`)}
-                    />
-                    <TextInput
-                      size="sm"
-                      type="time"
-                      step={60}
-                      disabled={intervals[index].enabled === false}
-                      {...register(`intervals.${index}.endTime`)}
-                    />
-                  </IntervalInputs>
-                </IntervalItem>
-              )
-            })}
+            {fields.map((field, index) => (
+              <IntervalItem key={field.id}>
+                <IntervalDay>
+                  <Controller
+                    name={`intervals.${index}.enabled`}
+                    control={control}
+                    render={({ field: { value, onChange } }) => (
+                      <Checkbox
+                        onCheckedChange={(checked: boolean) => onChange(checked)}
+                        checked={value}
+                      />
+                    )}
+                  />
+                  <Text>{weekDays[field.weekDay]}</Text>
+                </IntervalDay>
+                <IntervalInputs>
+                  <Controller
+                    name={`intervals.${index}.startTime`}
+                    control={control}
+                    render={({ field }) => (
+                      <TextInput
+                        size="sm"
+                        type="time"
+                        step={60}
+                        disabled={!intervals[index].enabled}
+                        {...field}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name={`intervals.${index}.endTime`}
+                    control={control}
+                    render={({ field }) => (
+                      <TextInput
+                        size="sm"
+                        type="time"
+                        step={60}
+                        disabled={!intervals[index].enabled}
+                        {...field}
+                      />
+                    )}
+                  />
+                </IntervalInputs>
+              </IntervalItem>
+            ))}
           </IntervalContainer>
 
           {errors.intervals && (
