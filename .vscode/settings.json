@@ -1,9 +1,11 @@
 {
   "editor.indentSize": "spaces",
   "cSpell.words": [
+    "camelcase",
     "datetime",
     "dayjs",
     "Devlps",
+    "rocketseat",
     "schedulings",
     "Selectd",
     "tanstack"
