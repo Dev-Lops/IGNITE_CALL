@@ -33,7 +33,7 @@ interface CalendarProps {
   selectedDate: Date | null
   onDateSelectd: (date: Date) => void
 }
-export function Calendar({ onDateSelectd, selectedDate }: CalendarProps) {
+export function Calendar({ onDateSelectd }: CalendarProps) {
   const [currentDate, setCurrentDate] = useState(() => {
     return dayjs().set('date', 1)
   })
@@ -75,6 +75,9 @@ export function Calendar({ onDateSelectd, selectedDate }: CalendarProps) {
   })
 
   const calendarWeeks = useMemo(() => {
+    if (!blockedDates) {
+      return []
+    }
     const daysInMonthArray = Array.from({
       length: currentDate.daysInMonth(),
     }).map((_, i) => {
@@ -113,7 +116,7 @@ export function Calendar({ onDateSelectd, selectedDate }: CalendarProps) {
           date,
           disabled:
             date.endOf('day').isBefore(new Date()) ||
-            blockedDates?.blockedWeekDays.includes(date.get('day')),
+            blockedDates.blockedWeekDays.includes(date.get('day')),
         }
       }),
       ...nextMonthFillArray.map((date) => {
