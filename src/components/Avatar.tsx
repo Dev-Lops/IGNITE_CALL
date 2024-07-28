@@ -14,8 +14,7 @@ const Avatar: React.FC<CustomAvatarProps> = ({
 }) => {
   return (
     <IgniteAvatar
-      {...props}
-      as="img" // assuming IgniteAvatar accepts this to render as img
+      {...(props as any)}
       src={src}
       referrerPolicy={referrerPolicy}
       alt={alt}
