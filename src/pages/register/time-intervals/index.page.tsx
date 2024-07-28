@@ -26,6 +26,8 @@ import {
 import { convertTimeStringToMinutes } from '@/utils/converter-time-string-to-minutes'
 import { GetWeekDays } from '@/utils/get-week-days'
 
+interface 
+
 const timeIntervalsFormSchema = z.object({
   intervals: z
     .array(

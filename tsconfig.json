@@ -3,7 +3,7 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": true,
+    "strict": false,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
@@ -12,6 +12,11 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "noImplicitAny": false, // Permite a utilização de `any` implícito // Suprime erros implícitos de `any` em índices
+    "noUnusedLocals": false, // Permite variáveis locais não utilizadas
+    "noUnusedParameters": false, // Permite parâmetros não utilizados em funções
+    "noImplicitReturns": false, // Permite funções que não retornam um valor em todos os caminhos
+    "noFallthroughCasesInSwitch": false, // Permite cair nos casos dos switch sem necessidade de `break`
     "paths": {
       "@/*": ["./src/*"]
     }

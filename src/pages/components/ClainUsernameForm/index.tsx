@@ -29,7 +29,7 @@ export function ClainUsernameForm() {
 
   const router = useRouter()
 
-  async function handleClaiinUsername(data: ClainUsernameFormData) {
+  async function handleClainUsername(data: ClainUsernameFormData) {
     const { username } = data
 
     await router.push(`/register?username=${username}`)
@@ -37,7 +37,7 @@ export function ClainUsernameForm() {
 
   return (
     <>
-      <Form as="form" onSubmit={handleSubmit(handleClaiinUsername)}>
+      <Form as="form" onSubmit={handleSubmit(handleClainUsername)}>
         <TextInput
           size="sm"
           prefix="iginite.com/"
