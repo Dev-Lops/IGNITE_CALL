@@ -55,7 +55,7 @@ export default function ClaimUsernameForm() {
             size="sm"
             type="text"
             placeholder="seu-usuário"
-            {...register('username')}
+            {...(register('username') as any)} // Usando asserção de tipo para desativar verificação de tipos
             id="username"
           />
 
