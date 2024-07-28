@@ -40,7 +40,6 @@ export function buildNextAuthOptions(
         ) {
           return '/register/connect-calendar?error=permissions'
         }
-
         return true
       },
       async session({ session, user }) {
