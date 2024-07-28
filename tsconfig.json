@@ -16,7 +16,6 @@
     "noUnusedLocals": false, // Permite variáveis locais não utilizadas
     "noUnusedParameters": false, // Permite parâmetros não utilizados em funções
     "noImplicitReturns": false, // Permite funções que não retornam um valor em todos os caminhos
-    "noFallthroughCasesInSwitch": false, // Permite cair nos casos dos switch sem necessidade de `break`
     "paths": {
       "@/*": ["./src/*"]
     }
