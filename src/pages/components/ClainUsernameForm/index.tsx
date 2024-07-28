@@ -47,7 +47,6 @@ export function ClainUsernameForm() {
           type="text"
           id="username"
           value=""
-          @ts-ignore
           // Omitindo outras propriedades que podem ser obrigatórias
         />
         <Button size="sm" type="submit" disabled={isSubmitting}>
