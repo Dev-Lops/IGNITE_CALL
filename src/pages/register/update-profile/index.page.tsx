@@ -1,5 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Button, Heading, MultiStep, Text, TextArea } from '@ignite-ui/react'
+import {
+  Avatar,
+  Button,
+  Heading,
+  MultiStep,
+  Text,
+  TextArea,
+} from '@ignite-ui/react'
 import { GetServerSideProps } from 'next'
 import { unstable_getServerSession } from 'next-auth'
 import { useSession } from 'next-auth/react'
@@ -9,11 +16,10 @@ import { ArrowRight } from 'phosphor-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { api } from '../../../lib/axios'
+
 import { Container, Header } from '../styles'
 import { FormAnnotation, ProfileBox } from './styles'
 import { buildNextAuthOptions } from '@/pages/api/auth/[...nextauth].api'
-import Avatar from '@/components/Avatar'
-// Importa o wrapper Avatar
 
 const updateProfileSchema = z.object({
   bio: z.string(),
@@ -60,6 +66,7 @@ export default function UpdateProfile() {
           <label>
             <Text>Foto de perfil</Text>
             <Avatar
+              // @ts-ignore
               src={session.data?.user.avatar_url}
               referrerPolicy="no-referrer"
               alt={session.data?.user.name}
