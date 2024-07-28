@@ -1,9 +1,10 @@
-import { Avatar, Heading, Text } from '@ignite-ui/react'
+import { Heading, Text } from '@ignite-ui/react'
 import { Container, UserHead } from './styles'
 import type { GetStaticPaths, GetStaticProps } from 'next'
 import { prisma } from '@/lib/prisma'
 import { ScheduleForm } from './ScheduleForm'
 import { NextSeo } from 'next-seo'
+import Avatar from '../../../components/Avatar'
 
 interface ScheduleProps {
   user: {
