@@ -14,6 +14,7 @@ import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { api } from '../../../lib/axios'
 import { Container, Header } from '../styles'
+
 import {
   FormError,
   IntervalBox,
@@ -22,9 +23,8 @@ import {
   IntervalInputs,
   IntervalItem,
 } from './styles'
-
-import { GetWeekDays } from '@/utils/get-week-days'
 import { convertTimeStringToMinutes } from '@/utils/converter-time-string-to-minutes'
+import { GetWeekDays } from '@/utils/get-week-days'
 
 const timeIntervalsFormSchema = z.object({
   intervals: z
@@ -100,8 +100,8 @@ export default function TimeIntervals() {
 
   const intervals = watch('intervals')
 
-  async function handleSetTimeIntervals(data: TimeIntervalsFormOutput) {
-    const { intervals } = data
+  async function handleSetTimeIntervals(data: any) {
+    const { intervals } = data as TimeIntervalsFormOutput
 
     await api.post('/users/time-intervals', {
       intervals,
@@ -127,40 +127,46 @@ export default function TimeIntervals() {
 
         <IntervalBox as="form" onSubmit={handleSubmit(handleSetTimeIntervals)}>
           <IntervalContainer>
-            {fields.map((field, index) => (
-              <IntervalItem key={field.id}>
-                <IntervalDay>
-                  <Controller
-                    name={`intervals.${index}.enabled`}
-                    control={control}
-                    render={({ field }) => (
-                      <Checkbox
-                        {...field}
-                        checked={field.value}
-                        onCheckedChange={(checked) => field.onChange(checked)}
-                      />
-                    )}
-                  />
-                  <Text>{weekDays[field.weekDay]}</Text>
-                </IntervalDay>
-                <IntervalInputs>
-                  <TextInput
-                    size="sm"
-                    type="time"
-                    step={60}
-                    disabled={!intervals[index].enabled}
-                    {...(register(`intervals.${index}.startTime`) as any)}
-                  />
-                  <TextInput
-                    size="sm"
-                    type="time"
-                    step={60}
-                    disabled={!intervals[index].enabled}
-                    {...(register(`intervals.${index}.endTime`) as any)}
-                  />
-                </IntervalInputs>
-              </IntervalItem>
-            ))}
+            {fields.map((field, index) => {
+              return (
+                <IntervalItem key={field.id}>
+                  <IntervalDay>
+                    <Controller
+                      name={`intervals.${index}.enabled`}
+                      control={control}
+                      render={({ field }) => {
+                        return (
+                          <Checkbox
+                            // @ts-ignore
+                            onCheckedChange={(checked) =>
+                              field.onChange(checked)
+                            }
+                            checked={field.value}
+                          />
+                        )
+                      }}
+                    />
+                    <Text>{weekDays[field.weekDay]}</Text>
+                  </IntervalDay>
+                  <IntervalInputs>
+                    <TextInput
+                      size="sm"
+                      type="time"
+                      step={60}
+                      disabled={intervals[index].enabled === false}
+                      {...(register(`intervals.${index}.startTime`) as any)}
+                    />
+                    <TextInput
+                      size="sm"
+                      type="time"
+                      step={60}
+                      disabled={intervals[index].enabled === false}
+                      {...(register(`intervals.${index}.endTime`) as any)}
+                    />
+                  </IntervalInputs>
+                </IntervalItem>
+              )
+            })}
           </IntervalContainer>
 
           {errors.intervals && (
