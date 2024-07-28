@@ -42,13 +42,11 @@ const timeIntervalsFormSchema = z.object({
       message: 'Você precisa selecionar pelo menos um dia da semana',
     })
     .transform((intervals) => {
-      return intervals.map((interval) => {
-        return {
-          weekDay: interval.weekDay,
-          startTimeInMinutes: convertTimeStringToMinutes(interval.startTime),
-          endTimeInMinutes: convertTimeStringToMinutes(interval.endTime),
-        }
-      })
+      return intervals.map((interval) => ({
+        weekDay: interval.weekDay,
+        startTimeInMinutes: convertTimeStringToMinutes(interval.startTime),
+        endTimeInMinutes: convertTimeStringToMinutes(interval.endTime),
+      }))
     })
     .refine(
       (intervals) => {
@@ -99,12 +97,10 @@ export default function TimeIntervals() {
 
   const intervals = watch('intervals')
 
-  async function handleSetTimeIntervals(data: any) {
-    const { intervals } = data as TimeIntervalsFormOutput
+  async function handleSetTimeIntervals(data: TimeIntervalsFormOutput) {
+    const { intervals } = data
 
-    await api.post('/users/time-intervals', {
-      intervals,
-    })
+    await api.post('/users/time-intervals', { intervals })
 
     await router.push('/register/update-profile')
   }
@@ -126,45 +122,41 @@ export default function TimeIntervals() {
 
         <IntervalBox as="form" onSubmit={handleSubmit(handleSetTimeIntervals)}>
           <IntervalContainer>
-            {fields.map((field, index) => {
-              return (
-                <IntervalItem key={field.id}>
-                  <IntervalDay>
-                    <Controller
-                      name={`intervals.${index}.enabled`}
-                      control={control}
-                      render={({ field }) => {
-                        return (
-                          <Checkbox
-                            onCheckedChange={(checked) =>
-                              field.onChange(checked === true)
-                            }
-                            checked={field.value}
-                          />
-                        )
-                      }}
-                    />
-                    <Text>{weekDays[field.weekDay]}</Text>
-                  </IntervalDay>
-                  <IntervalInputs>
-                    <TextInput
-                      size="sm"
-                      type="time"
-                      step={60}
-                      disabled={intervals[index].enabled === false}
-                      {...register(`intervals.${index}.startTime`)}
-                    />
-                    <TextInput
-                      size="sm"
-                      type="time"
-                      step={60}
-                      disabled={intervals[index].enabled === false}
-                      {...register(`intervals.${index}.endTime`)}
-                    />
-                  </IntervalInputs>
-                </IntervalItem>
-              )
-            })}
+            {fields.map((field, index) => (
+              <IntervalItem key={field.id}>
+                <IntervalDay>
+                  <Controller
+                    name={`intervals.${index}.enabled`}
+                    control={control}
+                    render={({ field }) => (
+                      <Checkbox
+                        onCheckedChange={(checked) =>
+                          field.onChange(checked === true)
+                        }
+                        checked={field.value}
+                      />
+                    )}
+                  />
+                  <Text>{weekDays[field.weekDay]}</Text>
+                </IntervalDay>
+                <IntervalInputs>
+                  <TextInput
+                    size="sm"
+                    type="time"
+                    step={60}
+                    disabled={!intervals[index].enabled}
+                    {...register(`intervals.${index}.startTime`)}
+                  />
+                  <TextInput
+                    size="sm"
+                    type="time"
+                    step={60}
+                    disabled={!intervals[index].enabled}
+                    {...register(`intervals.${index}.endTime`)}
+                  />
+                </IntervalInputs>
+              </IntervalItem>
+            ))}
           </IntervalContainer>
 
           {errors.intervals && (
