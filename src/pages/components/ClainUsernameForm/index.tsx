@@ -18,7 +18,7 @@ const claimUsernameFormSchema = z.object({
 
 type ClaimUsernameFormData = z.infer<typeof claimUsernameFormSchema>
 
-export function ClaimUsernameForm() {
+export function ClaimUserNameForm() {
   const {
     register,
     handleSubmit,
