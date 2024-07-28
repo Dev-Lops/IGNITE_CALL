@@ -1,25 +1,19 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import {
-  Avatar,
-  Button,
-  Heading,
-  MultiStep,
-  Text,
-  TextArea,
-} from '@ignite-ui/react'
+import { Button, Heading, MultiStep, Text, TextArea } from '@ignite-ui/react'
 import { GetServerSideProps } from 'next'
 import { unstable_getServerSession } from 'next-auth'
 import { useSession } from 'next-auth/react'
+import { NextSeo } from 'next-seo'
 import { useRouter } from 'next/router'
 import { ArrowRight } from 'phosphor-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { api } from '../../../lib/axios'
-
 import { Container, Header } from '../styles'
 import { FormAnnotation, ProfileBox } from './styles'
 import { buildNextAuthOptions } from '@/pages/api/auth/[...nextauth].api'
-import { NextSeo } from 'next-seo'
+import Avatar from '@/components/Avatar'
+// Importa o wrapper Avatar
 
 const updateProfileSchema = z.object({
   bio: z.string(),
@@ -40,7 +34,7 @@ export default function UpdateProfile() {
   const router = useRouter()
 
   async function handleUpdateProfile(data: UpdateProfileData) {
-    await api.put('/users/update-profile', {
+    await api.put('/users/profile', {
       bio: data.bio,
     })
 
@@ -50,6 +44,7 @@ export default function UpdateProfile() {
   return (
     <>
       <NextSeo title="Atualize seu perfil | Ignite Call" noindex />
+
       <Container>
         <Header>
           <Heading as="strong">Bem-vindo ao Ignite Call!</Heading>
